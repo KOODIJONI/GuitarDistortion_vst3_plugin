@@ -12,7 +12,6 @@ GuitarDistortion_vst3_plugin - A basic guitar distortion effect, available as a 
 
 
 
-https://github.com/user-attachments/assets/8c50a28f-2212-4a7f-9cc2-9a16ddbcc68c
 
 
 
