@@ -5,6 +5,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "PedalButtonLookAndFeel.h"
+#include "BinaryData.h"
+
 //==============================================================================
 
 RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcessor& p)
@@ -16,7 +18,8 @@ RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcesso
 
     // Gain Slider and Label
     addAndMakeVisible(gainSlider);
-    gainSlider.setRange(0, 1.00f, 0.01f);
+    gainSlider.setRange(1.00f, 400.00f, 0.01f);
+    gainSlider.setValue(50);
     gainSlider.setSliderStyle(juce::Slider::Rotary);
     gainSlider.addListener(this);
     gainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -32,7 +35,8 @@ RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcesso
 
     // Bass Slider and Label
     addAndMakeVisible(bassSlider);
-    bassSlider.setRange(0, 1.00f, 0.01f);
+    bassSlider.setRange(1, 10.00f, 0.01f);
+    bassSlider.setValue(1);
     bassSlider.setSliderStyle(juce::Slider::Rotary);
     bassSlider.addListener(this);
     bassSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -48,7 +52,8 @@ RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcesso
 
     // Treble Slider and Label
     addAndMakeVisible(trebleSlider);
-    trebleSlider.setRange(0, 1.00f, 0.01f);
+    trebleSlider.setRange(1, 10.00f, 0.01f);
+    trebleSlider.setValue(1);
     trebleSlider.setSliderStyle(juce::Slider::Rotary);
     trebleSlider.addListener(this);
     trebleSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -65,6 +70,7 @@ RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcesso
     // Wet/Dry Slider and Label
     addAndMakeVisible(wetDrySlider);
     wetDrySlider.setRange(0, 1.00f, 0.01f);
+    wetDrySlider.setValue(0.5);
     wetDrySlider.setSliderStyle(juce::Slider::Rotary);
     wetDrySlider.addListener(this);
     wetDrySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -81,6 +87,7 @@ RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcesso
     // Post Gain Slider and Label
     addAndMakeVisible(postGainSlider);
     postGainSlider.setRange(0, 1.00f, 0.01f);
+    postGainSlider.setValue(0.5);
     postGainSlider.setSliderStyle(juce::Slider::Rotary);
     postGainSlider.addListener(this);
     postGainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -95,14 +102,25 @@ RokPedalAudioProcessorEditor::RokPedalAudioProcessorEditor(RokPedalAudioProcesso
     postGainLabel.setJustificationType(juce::Justification::centred);
 
     // Logo Image
-    image = juce::ImageCache::getFromFile(juce::File("C:/Juce/RokPedal/RokPedal/Resource/image.png"));
+    image = juce::ImageCache::getFromMemory(BinaryData::image_png, BinaryData::image_pngSize);
 
+	if (image.isNull())
+	{
+		jassertfalse; // This should never happen
+	}
     //Power Button
     powerButton.setButtonText("");  // No text on the button
     addAndMakeVisible(powerButton);
 
     // Colors & Look
     powerButton.setLookAndFeel(&pedalButtonLookAndFeel);
+
+	//onclick
+	powerButton.onClick = [this]()
+		{
+			audioProcessor.setPowerButtonState(powerButton.getToggleState());
+		};
+	
 }
 
 
@@ -115,10 +133,14 @@ RokPedalAudioProcessorEditor::~RokPedalAudioProcessorEditor()
 void RokPedalAudioProcessorEditor::paint(juce::Graphics& g)
 {
     g.fillAll(juce::Colours::black);
+
+    image = juce::ImageCache::getFromMemory(BinaryData::image_png, BinaryData::image_pngSize);
+
     if (image.isValid())
     {
-        juce::Image scaledImage = image.rescaled(image.getWidth()/4,image.getHeight()/4);
-        int xPosition = (getWidth() - scaledImage.getWidth()) / 2;
+        juce::Image scaledImage = image.rescaled(image.getWidth() / 4, image.getHeight() / 4);
+
+        int xPosition = (getWidth() - scaledImage.getWidth()) / 2 + 10;
 
         g.drawImageAt(scaledImage, xPosition, 0);
     }
@@ -150,4 +172,24 @@ void RokPedalAudioProcessorEditor::resized()
 
 void RokPedalAudioProcessorEditor::sliderValueChanged(juce::Slider * slider)
 {
+	if (slider == &gainSlider)
+	{
+		audioProcessor.setGain(gainSlider.getValue());
+	}
+	else if (slider == &bassSlider)
+	{
+		audioProcessor.setBass(bassSlider.getValue());
+	}
+	else if (slider == &trebleSlider)
+	{
+		audioProcessor.setTreble(trebleSlider.getValue());
+	}
+	else if (slider == &wetDrySlider)
+	{
+		audioProcessor.setWetDry(wetDrySlider.getValue());
+	}
+	else if (slider == &postGainSlider)
+	{
+		audioProcessor.setPostGain(postGainSlider.getValue());
+	}
 }
