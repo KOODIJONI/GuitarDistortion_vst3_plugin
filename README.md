@@ -3,6 +3,20 @@ GuitarDistortion_vst3_plugin - A basic guitar distortion effect, available as a 
 
 <img src="https://github.com/user-attachments/assets/fd42be34-3ff8-4549-99b8-14603a6bea04" width="200">
 
+![Clean guitar audio example](https://github.com/user-attachments/assets/a253a5ce-ad49-4261-8356-67acc098f6b5)
+
+![Distorted guitar audio example](https://github.com/user-attachments/assets/8c50a28f-2212-4a7f-9cc2-9a16ddbcc68c)
+
+
+
+
+
+
+https://github.com/user-attachments/assets/8c50a28f-2212-4a7f-9cc2-9a16ddbcc68c
+
+
+
+
 # Features⭐
 __On/Off Button:__ Toggles the guitar effect on or off.
 
